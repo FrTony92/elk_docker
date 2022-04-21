@@ -72,6 +72,7 @@ services:
       - certs:/usr/share/elasticsearch/config/certs
       - esdata01:/usr/share/elasticsearch/data
       - ./es01_elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - ./node_jvm.options:/usr/share/elasticsearch/config/jvm.options
     ports:
       - ${ES_PORT}:9200
     environment:
@@ -102,6 +103,7 @@ services:
       - certs:/usr/share/elasticsearch/config/certs
       - esdata02:/usr/share/elasticsearch/data
       - ./es02_elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - ./node_jvm.options:/usr/share/elasticsearch/config/jvm.options
     environment:
       - cluster.name=${CLUSTER_NAME}
       - xpack.license.self_generated.type=${LICENSE}
@@ -129,6 +131,7 @@ services:
       - certs:/usr/share/elasticsearch/config/certs
       - esdata03:/usr/share/elasticsearch/data
       - ./es03_elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - ./node_jvm.options:/usr/share/elasticsearch/config/jvm.options
     environment:
       - cluster.name=${CLUSTER_NAME}
       - xpack.license.self_generated.type=${LICENSE}
@@ -188,4 +191,3 @@ volumes:
     driver: local
   kibanadata:
     driver: local
-
