@@ -105,7 +105,7 @@ On Kibana, create a basic "beats" logstash pipeline:
       }
     }
 
-On the serveur check the firewall to allow incoming traffic on tcp/5044
+On the serveur check that the firewall allow incoming traffic on tcp/5044
 
     systemctl status firewalld
     ● firewalld.service - firewalld - dynamic firewall daemon
