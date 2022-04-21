@@ -15,7 +15,8 @@ Inside the directory copy the files:
  - es01_elasticsearch.yml
  - kibana.yml
 
-Because we are going to create a 3 nodes cluster, duplicate and adjust es01_elasticsearch.yml for the 2 other nodes.
+Because we are going to create a 3 nodes cluster, duplicate and adjust es01_elasticsearch.yml for the 2 other nodes (es02 and es03).
+
 Update .env to your needs for cluster name and or password provided for kibana and elastic superuser.
 On the local server update the /etc/hosts in order to map local IP of the server with es01,es02 and es03.
 
@@ -103,3 +104,6 @@ On Kibana, create a basic "beats" logstash pipeline:
     }
 
 **
+
+
+> Written with [StackEdit](https://stackedit.io/).
