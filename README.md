@@ -19,6 +19,8 @@ Because we are going to create a 3 nodes cluster, duplicate and adjust es01_elas
 
 Update .env to your needs for cluster name and or password provided for kibana and elastic superuser.
 On the local server update the /etc/hosts in order to map local IP of the server with es01,es02 and es03.
+According to the available memory on the host update parameter "-XmsXX" and "-XmxXX" which will be used by each docker node.
+For exemple setting "-Xms1g" and "-Xmx1g" will allow to have 1Gb by node and, when started, 3 Gb for the cluster.
 
 when everything is OK start the cluster:
 
