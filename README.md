@@ -32,5 +32,74 @@ To stop stack:
     cd /data/elk_compose
     docker-compose down
 
+After first launch connect with elastic superuser and create your own superuser.
+
+To allow a local metricbeat to connect to the node or kibana update metricbeat.yml with the following section:
+
+    # =================================== Kibana ===================================
+    setup.kibana:
+       host: "http://127.0.0.1:5601"
+       protocol: https
+       username: "antoine"
+       password: "antoine"
+       ssl.enabled: true
+       ssl.verification_mode: none
+       ssl.certificate_authorities: ["/data/elk_compose/certs/ca/ca.crt"]
+    #---------------------------- Elasticsearch output -----------------------------
+    output.elasticsearch:
+       hosts: ["es01:9200"]
+       protocol: https
+       username: "antoine"
+       password: "antoine"
+       ssl.certificate_authorities: ["/data/elk_compose/certs/ca/ca.crt"]
+       ssl.verification_mode: "none"
+    
+To allow a local logstash to connect to the node update logstash.yml with the following section:
+
+    # ------------ X-Pack Settings (not applicable for OSS build)--------------
+    xpack.management.enabled: true
+    xpack.management.elasticsearch.hosts:
+       - "https://es01:9200"
+    xpack.management.logstash.poll_interval: 10s
+    xpack.management.pipeline.id: ["beats"]
+    xpack.management.elasticsearch.username: antoine
+    xpack.management.elasticsearch.password: antoine
+    xpack.management.elasticsearch.ssl.certificate_authority: /etc/logstash/ca.crt
+    xpack.management.elasticsearch.ssl.verification_mode: "none"
+    
+    xpack.monitoring.enabled: true
+    xpack.monitoring.elasticsearch.username: antoine
+    xpack.monitoring.elasticsearch.password: antoine
+    xpack.monitoring.elasticsearch.hosts:
+       - "https://es01:9200"
+    xpack.monitoring.elasticsearch.ssl.certificate_authority: /etc/logstash/ca.crt
+    xpack.monitoring.elasticsearch.ssl.verification_mode: "none"
+    # -------------------------------------------------------------------------
+
+And copy the ca.crt file in the logstash repository:
+
+    cp /data/elk_compose/certs/ca/ca.crt /etc/logstash/ca.crt
+    chown logstash:logstash /etc/logstash/ca.crt
+
+On Kibana, create a basic "beats" logstash pipeline:
+
+    input {
+      beats {
+        port => 5044
+      }
+    }
+    filter {
+    }    
+    output {
+      elasticsearch {
+        index => "%{[@metadata][beat]}-%{[@metadata][version]}-%{+YYYY.MM.dd}"
+        hosts => ["https://localhost:9200"]
+        user => "antoine"
+        password => "antoine"
+        cacert => "/etc/logstash/ca.crt"
+        ssl => true
+        ssl_certificate_verification => false
+      }
+    }
 
 **
