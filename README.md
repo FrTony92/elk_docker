@@ -105,7 +105,34 @@ On Kibana, create a basic "beats" logstash pipeline:
       }
     }
 
+On the serveur check the firewall to allow incoming traffic on tcp/5044
+
+    systemctl status firewalld
+    ● firewalld.service - firewalld - dynamic firewall daemon
+       Loaded: loaded (/usr/lib/systemd/system/firewalld.service; enabled; vendor preset: enabled)
+       Active: active (running) since Fri 2022-04-22 00:56:08 CEST; 3min 2s ago
+
+Create a logstash-beat firewalld service:
+
+    vi /etc/firewalld/services/logstash-beats.xml
+
+Copy the following lines:
+
+    <?xml version="1.0" encoding="utf-8"?>
+    <service>
+      <short>Logstash</short>
+      <description>Logstash service is listening Elastic Beats before sending it to elasticsearch infra.</description>
+      <port protocol="tcp" port="5044"/>
+    </service>
+Apply it permanently:
+
+    firewall-cmd --zone=public --add-service=logstash-beats --permanent
+
+Restart firewalld:
+
+    systemctl restart firewalld
+
+Try a telnet on port 5044 from a target node to check it's ok.
+
 **
-
-
 > Written with [StackEdit](https://stackedit.io/).
