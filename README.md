@@ -134,5 +134,14 @@ Restart firewalld:
 
 Try a telnet on port 5044 from a target node to check it's ok.
 
+## For checking / testing
+
+User htop (viusal top command) to track ressource usage
+for CentOs 8:
+
+    dnf install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm -y
+    dnf update
+    dnf install htop -y
+
 **
 > Written with [StackEdit](https://stackedit.io/).
