@@ -143,5 +143,9 @@ for CentOs 8:
     dnf update
     dnf install htop -y
 
+For testing you can use stress-ng (for centos8):
+    dnf install stress-ng -y
+
+
 **
 > Written with [StackEdit](https://stackedit.io/).
