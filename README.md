@@ -43,8 +43,8 @@ To allow a local metricbeat to connect to the node or kibana update metricbeat.y
     setup.kibana:
        host: "http://127.0.0.1:5601"
        protocol: https
-       username: "antoine"
-       password: "antoine"
+       username: "USER"
+       password: "PASSWORD"
        ssl.enabled: true
        ssl.verification_mode: none
        ssl.certificate_authorities: ["/data/elk_compose/certs/ca/ca.crt"]
@@ -52,8 +52,8 @@ To allow a local metricbeat to connect to the node or kibana update metricbeat.y
     output.elasticsearch:
        hosts: ["es01:9200"]
        protocol: https
-       username: "antoine"
-       password: "antoine"
+       username: "USER"
+       password: "PASSWORD"
        ssl.certificate_authorities: ["/data/elk_compose/certs/ca/ca.crt"]
        ssl.verification_mode: "none"
     
@@ -65,14 +65,14 @@ To allow a local logstash to connect to the node update logstash.yml with the fo
        - "https://es01:9200"
     xpack.management.logstash.poll_interval: 10s
     xpack.management.pipeline.id: ["beats"]
-    xpack.management.elasticsearch.username: antoine
-    xpack.management.elasticsearch.password: antoine
+    xpack.management.elasticsearch.username: USER
+    xpack.management.elasticsearch.password: PASSWORD
     xpack.management.elasticsearch.ssl.certificate_authority: /etc/logstash/ca.crt
     xpack.management.elasticsearch.ssl.verification_mode: "none"
     
     xpack.monitoring.enabled: true
-    xpack.monitoring.elasticsearch.username: antoine
-    xpack.monitoring.elasticsearch.password: antoine
+    xpack.monitoring.elasticsearch.username: USER
+    xpack.monitoring.elasticsearch.password: PASSWORD
     xpack.monitoring.elasticsearch.hosts:
        - "https://es01:9200"
     xpack.monitoring.elasticsearch.ssl.certificate_authority: /etc/logstash/ca.crt
@@ -97,8 +97,8 @@ On Kibana, create a basic "beats" logstash pipeline:
       elasticsearch {
         index => "%{[@metadata][beat]}-%{[@metadata][version]}-%{+YYYY.MM.dd}"
         hosts => ["https://localhost:9200"]
-        user => "antoine"
-        password => "antoine"
+        user => "USER"
+        password => "PASSWORD"
         cacert => "/etc/logstash/ca.crt"
         ssl => true
         ssl_certificate_verification => false
