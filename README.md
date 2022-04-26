@@ -3,7 +3,7 @@
 Check docker configuration in case of proxy
 
     mkdir -p /etc/systemd/system/docker.service.d
-    /etc/systemd/system/docker.service.d/http-proxy.conf
+    vi /etc/systemd/system/docker.service.d/http-proxy.conf
 Add those lines:
 (for HTTPS_PROXY use http if you have handshake error)
 
