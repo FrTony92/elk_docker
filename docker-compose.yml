@@ -63,7 +63,7 @@ services:
       retries: 120
 
   es01:
-    always: restart
+    restart: always
     depends_on:
       setup:
         condition: service_healthy
@@ -109,7 +109,7 @@ services:
       retries: 120
 
   es02:
-    always: restart
+    restart: always
     depends_on:
       - es01
     image: docker.elastic.co/elasticsearch/elasticsearch:${STACK_VERSION}
@@ -151,7 +151,7 @@ services:
       retries: 120
 
   es03:
-    always: restart
+    restart: always
     depends_on:
       - es02
     image: docker.elastic.co/elasticsearch/elasticsearch:${STACK_VERSION}
@@ -193,7 +193,7 @@ services:
       retries: 120
 
   kibana:
-    always: restart
+    restart: always
     depends_on:
       es01:
         condition: service_healthy
@@ -205,6 +205,7 @@ services:
     volumes:
       - certs:/usr/share/kibana/config/certs
       - kibanadata:/usr/share/kibana/data
+      - ./kibana.yml:/usr/share/kibana/config/kibana.yml
     ports:
       - ${KIBANA_PORT}:5601
     environment:
