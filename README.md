@@ -1,16 +1,22 @@
 ## ELK full stack on docker-compose
 
 Check docker configuration in case of proxy
-mkdir -p /etc/systemd/system/docker.service.d
-/etc/systemd/system/docker.service.d/http-proxy.conf
-[Service]
-Environment="HTTP_PROXY=http://proxy.example.com:80"
-Environment="HTTPS_PROXY=https://proxy.example.com:443"
-Environment="NO_PROXY=localhost,127.0.0.1"
-systemctl daemon-reload
-systemctl restart docker
-systemctl show --property=Environment docker
 
+    mkdir -p /etc/systemd/system/docker.service.d
+    /etc/systemd/system/docker.service.d/http-proxy.conf
+Add those lines:
+(for HTTPS_PROXY use http if you have handshake error)
+
+    [Service]
+    Environment="HTTP_PROXY=http://proxy.example.com:80"
+    Environment="HTTPS_PROXY=http://proxy.example.com:443"
+    Environment="NO_PROXY=localhost,127.0.0.1"
+
+restart docker:
+
+    systemctl daemon-reload
+    systemctl restart docker
+    systemctl show --property=Environment docker
 Goal is to setup an elk cluster based on 3 nodes es01, es02 and es03 and a kibana node.
 
 On the target machine install docker and docker-compose.
