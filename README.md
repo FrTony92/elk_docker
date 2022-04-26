@@ -30,7 +30,7 @@ Inside the directory copy the files:
  - .env 
  - docker-compose.yml    
  - kibana.yml      
- - node_jvm.options #=> for java heap update to all nodes
+ - node_jvm.options #=> for java heap update to all nodes    
  (if needed - es01_elasticsearch.yml)    
       
 
