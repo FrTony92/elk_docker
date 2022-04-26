@@ -29,8 +29,9 @@ Create a directory for hosting the compose file:
 Inside the directory copy the files:
  - .env 
  - docker-compose.yml 
- - es01_elasticsearch.yml
- - kibana.yml
+ (if needed - es01_elasticsearch.yml)
+ (if needed - kibana.yml            )
+ (if needed - node_jvm.options      )
 
 Because we are going to create a 3 nodes cluster, duplicate and adjust es01_elasticsearch.yml for the 2 other nodes (es02 and es03).
 
