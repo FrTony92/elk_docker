@@ -1,4 +1,6 @@
-## ELK full stack on docker-compose
+# ELK full stack on docker-compose
+
+## Docker checks
 
 Check docker configuration in case of proxy
 
@@ -21,37 +23,74 @@ Goal is to setup an elk cluster based on 3 nodes es01, es02 and es03 and a kiban
 
 On the target machine install docker and docker-compose.
 
+## ELK Stack 7.17.4 - docker-compose
+
+Sources:
+Stack 7.17.x => https://www.elastic.co/guide/en/elastic-stack-get-started/7.17/get-started-docker.html#get-started-docker-tls
+
 Create a directory for hosting the compose file:
 
-    mkdir /data/elk_compose
-    chown 1000:1000 /data/elk_compose
+    mkdir /data/docker_elk_7.14.4
+    chown 1000:1000 /data/docker_elk_7.14.4
+    cd /data/docker_elk_7.14.4
 
-Inside the directory copy the files:
- - .env 
- - docker-compose.yml    
- - kibana.yml      
- - node_jvm.options #=> for java heap update to all nodes    
- (if needed - es01_elasticsearch.yml)    
-      
+Inside the directory create the files:
+ - instances.yml
+ - .env
+ - create-certs.yml 
+	 - => change line "- certs:/certs" by "- ./certs:/certs" 
+	 - it's to have a local /data/docker_elk_7.14.4/certs where all certs will be availables
+ - elastic-docker-tls.yml
+	 - Change the 3 lines **ES_JAVA_OPTS=-Xms512m -Xmx512m** to adjust the memory given to each nodes
 
-Because we are going to create a 3 nodes cluster, duplicate and adjust es01_elasticsearch.yml for the 2 other nodes (es02 and es03).
+when everything is OK create certificats:
 
-Update .env to your needs for cluster name and or password provided for kibana and elastic superuser.
-On the local server update the /etc/hosts in order to map local IP of the server with es01,es02 and es03.
-According to the available memory on the host update parameter "-XmsXX" and "-XmxXX" which will be used by each docker node.
-For exemple setting "-Xms1g" and "-Xmx1g" will allow to have 1Gb by node and, when started, 3 Gb for the cluster.
+    docker-compose -f create-certs.yml run --rm create_certs
 
-when everything is OK start the cluster:
+All certificats are avalables in /data/docker_elk_7.14.4/certs
+Bring up the three-node Elasticsearch cluster:
 
-    chown -R 1000:1000 /data/elk_compose
-    cd /data/elk_compose
+    docker-compose -f elastic-docker-tls.yml up -d
+
+Run the `elasticsearch-setup-passwords` tool to generate passwords for all built-in users, including the `kibana_system` user:
+
+    docker exec es01 /bin/bash -c "bin/elasticsearch-setup-passwords auto --batch --url https://es01:9200"
+
+Update `elastic-docker-tls.yml` with the `kibana_system`password generated.
+Add the following line under kibana volumes section to export outside the container the kibana.yml file :
+
+     - ./kibana.yml:/usr/share/kibana/config/kibana.yml
+
+Create a file kibana.yml and add the following lines:
+
+    server.host: "0.0.0.0"
+    server.shutdownTimeout: "5s"
+    elasticsearch.hosts: [ "https://elasticsearch:9200" ]
+    monitoring.ui.container.elasticsearch.enabled: true
+    xpack.monitoring.ui.container.elasticsearch.enabled: true
+    xpack.encryptedSavedObjects.encryptionKey: Hp5jW2nMY4hn3Jhvzsvl9G9crEBFxA9b
+    xpack.security.enabled: true
+
+Copy the `elastic-docker-tls.yml` updated to a  new `docker-compose.yml` file.
+
+Start the cluster:
+
     docker-compose up -d
 
+After check status of the cluster:
+
+    docker-compose ps
+
+After starting of the cluster try a connection:
+
+    curl -k -X GET "https://es01:9200/?pretty" -u elastic:[PASSWORD] --cacert /data/docker_elk_7.14.4/certs/ca/ca.crt
+    curl -k -X GET "https://es01:9200/_cat/nodes?pretty" -u elastic:[PASSWORD] --cacert /data/docker_elk_7.14.4/certs/ca/ca.crt
+
 Directory and all files must be attached to user / group 1000 / 1000 which are the one defined by elasticsearch.
-Default volumes location **/var/lib/docker/volumes** will be modified and store in /data/elk_compose.
+Default volumes location **/var/lib/docker/volumes** .
 To stop stack:
 
-    cd /data/elk_compose
+    cd /data/docker_elk_7.14.4
     docker-compose down
 
 After first launch connect with elastic superuser and create your own superuser.
@@ -66,14 +105,14 @@ To allow a local metricbeat to connect to the node or kibana update metricbeat.y
        password: "PASSWORD"
        ssl.enabled: true
        ssl.verification_mode: none
-       ssl.certificate_authorities: ["/data/elk_compose/certs/ca/ca.crt"]
+       ssl.certificate_authorities: ["/data/docker_elk_7.14.4/certs/ca/ca.crt"]
     #---------------------------- Elasticsearch output -----------------------------
     output.elasticsearch:
        hosts: ["es01:9200"]
        protocol: https
        username: "USER"
        password: "PASSWORD"
-       ssl.certificate_authorities: ["/data/elk_compose/certs/ca/ca.crt"]
+       ssl.certificate_authorities: ["/data/docker_elk_7.14.4/certs/ca/ca.crt"]
        ssl.verification_mode: "none"
     
 To allow a local logstash to connect to the node update logstash.yml with the following section:
@@ -86,7 +125,7 @@ To allow a local logstash to connect to the node update logstash.yml with the fo
     xpack.management.pipeline.id: ["beats"]
     xpack.management.elasticsearch.username: USER
     xpack.management.elasticsearch.password: PASSWORD
-    xpack.management.elasticsearch.ssl.certificate_authority: /etc/logstash/ca.crt
+    xpack.management.elasticsearch.ssl.certificate_authority: /data/docker_elk_7.14.4/certs/ca/ca.crt
     xpack.management.elasticsearch.ssl.verification_mode: "none"
     
     xpack.monitoring.enabled: true
@@ -94,14 +133,9 @@ To allow a local logstash to connect to the node update logstash.yml with the fo
     xpack.monitoring.elasticsearch.password: PASSWORD
     xpack.monitoring.elasticsearch.hosts:
        - "https://es01:9200"
-    xpack.monitoring.elasticsearch.ssl.certificate_authority: /etc/logstash/ca.crt
+    xpack.monitoring.elasticsearch.ssl.certificate_authority: /data/docker_elk_7.14.4/certs/ca/ca.crt
     xpack.monitoring.elasticsearch.ssl.verification_mode: "none"
     # -------------------------------------------------------------------------
-
-And copy the ca.crt file in the logstash repository:
-
-    cp /data/elk_compose/certs/ca/ca.crt /etc/logstash/ca.crt
-    chown logstash:logstash /etc/logstash/ca.crt
 
 On Kibana, create a basic "beats" logstash pipeline:
 
@@ -118,11 +152,30 @@ On Kibana, create a basic "beats" logstash pipeline:
         hosts => ["https://localhost:9200"]
         user => "USER"
         password => "PASSWORD"
-        cacert => "/etc/logstash/ca.crt"
+        cacert => "/data/docker_elk_7.14.4/certs/ca/ca.crt"
         ssl => true
         ssl_certificate_verification => false
       }
     }
+
+## ELK Stack 8.2.2
+
+Stack 8.x => https://www.elastic.co/guide/en/elastic-stack-get-started/8.2/get-started-stack-docker.html#get-started-docker-tls
+
+Create a directory for hosting the compose file:
+
+    mkdir /data/docker_elk_8.2.2
+    chown 1000:1000 /data/docker_elk_8.2.2
+    cd /data/docker_elk_8.2.2
+
+Inside the directory create the files:
+ - .env
+ - docker-compose.yml
+	 - Change line "- certs:/usr/share/elasticsearch/config/certs" by "- ./
+	 - certs:/usr/share/elasticsearch/config/certs"
+ 
+
+## Check and enable firewall rule for logstash
 
 On the serveur check that the firewall allow incoming traffic on tcp/5044
 
@@ -130,6 +183,13 @@ On the serveur check that the firewall allow incoming traffic on tcp/5044
     ● firewalld.service - firewalld - dynamic firewall daemon
        Loaded: loaded (/usr/lib/systemd/system/firewalld.service; enabled; vendor preset: enabled)
        Active: active (running) since Fri 2022-04-22 00:56:08 CEST; 3min 2s ago
+Vérification de la configuration du firewall:
+
+    firewall-cmd --state 
+    firewall-cmd --get-default-zone
+    firewall-cmd --get-active-zones
+    firewall-cmd --list-all
+    firewall-cmd --get-services
 
 Create a logstash-beat firewalld service:
 
@@ -168,3 +228,4 @@ For testing you can use stress-ng (for centos8):
 
 **
 > Written with [StackEdit](https://stackedit.io/).
+
