@@ -114,6 +114,7 @@ To allow a local metricbeat to connect to the node or kibana update metricbeat.y
        password: "PASSWORD"
        ssl.certificate_authorities: ["/data/docker_elk_7.14.4/certs/ca/ca.crt"]
        ssl.verification_mode: "none"
+       proxy_disable: true
     
 To allow a local logstash to connect to the node update logstash.yml with the following section:
 
