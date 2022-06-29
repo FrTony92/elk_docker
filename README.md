@@ -81,16 +81,48 @@ After check status of the cluster:
 
     docker-compose ps
 
+## ELK Stack 8.2.2
+
+Stack 8.x => https://www.elastic.co/guide/en/elastic-stack-get-started/8.2/get-started-stack-docker.html#get-started-docker-tls
+
+Create a directory for hosting the compose file:
+
+    mkdir /data/elk_8.2.2_docker
+    chown 1000:1000 /data/elk_8.2.2_docker
+    cd /data/elk_8.2.2_docker
+
+Inside the directory create the files:
+ - .env
+ - docker-compose.yml
+	 - Change line "- certs:/usr/share/elasticsearch/config/certs" by "- ./
+	 - certs:/usr/share/elasticsearch/config/certs"
+
+Add the following line under kibana volumes section to export outside the container the kibana.yml file :
+
+     - ./kibana.yml:/usr/share/kibana/config/kibana.yml
+
+Create a file kibana.yml and add the following lines:
+
+    server.host: "0.0.0.0"
+    server.shutdownTimeout: "5s"
+    elasticsearch.hosts: [ "https://elasticsearch:9200" ]
+    monitoring.ui.container.elasticsearch.enabled: true
+    xpack.monitoring.ui.container.elasticsearch.enabled: true
+    xpack.encryptedSavedObjects.encryptionKey: Hp5jW2nMY4hn3Jhvzsvl9G9crEBFxA9b
+    xpack.security.enabled: true
+ 
+## Check and post configuration ELK Stack (7 or 8)
+
 After starting of the cluster try a connection:
 
-    curl -k -X GET "https://es01:9200/?pretty" -u elastic:[PASSWORD] --cacert /data/docker_elk_7.14.4/certs/ca/ca.crt
-    curl -k -X GET "https://es01:9200/_cat/nodes?pretty" -u elastic:[PASSWORD] --cacert /data/docker_elk_7.14.4/certs/ca/ca.crt
+    curl -k -X GET "https://es01:9200/?pretty" -u elastic:[PASSWORD] --cacert /data/[stack_location]/certs/ca/ca.crt
+    curl -k -X GET "https://es01:9200/_cat/nodes?pretty" -u elastic:[PASSWORD] --cacert /data/[stack_location]/certs/ca/ca.crt
 
 Directory and all files must be attached to user / group 1000 / 1000 which are the one defined by elasticsearch.
 Default volumes location **/var/lib/docker/volumes** .
 To stop stack:
 
-    cd /data/docker_elk_7.14.4
+    cd /data/[stack_location]
     docker-compose down
 
 After first launch connect with elastic superuser and create your own superuser.
@@ -105,14 +137,14 @@ To allow a local metricbeat to connect to the node or kibana update metricbeat.y
        password: "PASSWORD"
        ssl.enabled: true
        ssl.verification_mode: none
-       ssl.certificate_authorities: ["/data/docker_elk_7.14.4/certs/ca/ca.crt"]
+       ssl.certificate_authorities: ["/data/[stack_location]/certs/ca/ca.crt"]
     #---------------------------- Elasticsearch output -----------------------------
     output.elasticsearch:
        hosts: ["es01:9200"]
        protocol: https
        username: "USER"
        password: "PASSWORD"
-       ssl.certificate_authorities: ["/data/docker_elk_7.14.4/certs/ca/ca.crt"]
+       ssl.certificate_authorities: ["/data/[stack_location]/certs/ca/ca.crt"]
        ssl.verification_mode: "none"
        proxy_disable: true
     
@@ -126,7 +158,7 @@ To allow a local logstash to connect to the node update logstash.yml with the fo
     xpack.management.pipeline.id: ["beats"]
     xpack.management.elasticsearch.username: USER
     xpack.management.elasticsearch.password: PASSWORD
-    xpack.management.elasticsearch.ssl.certificate_authority: /data/docker_elk_7.14.4/certs/ca/ca.crt
+    xpack.management.elasticsearch.ssl.certificate_authority: /data/[stack_location]/certs/ca/ca.crt
     xpack.management.elasticsearch.ssl.verification_mode: "none"
     
     xpack.monitoring.enabled: true
@@ -134,7 +166,7 @@ To allow a local logstash to connect to the node update logstash.yml with the fo
     xpack.monitoring.elasticsearch.password: PASSWORD
     xpack.monitoring.elasticsearch.hosts:
        - "https://es01:9200"
-    xpack.monitoring.elasticsearch.ssl.certificate_authority: /data/docker_elk_7.14.4/certs/ca/ca.crt
+    xpack.monitoring.elasticsearch.ssl.certificate_authority: /data/[stack_location]/certs/ca/ca.crt
     xpack.monitoring.elasticsearch.ssl.verification_mode: "none"
     # -------------------------------------------------------------------------
 
@@ -153,28 +185,11 @@ On Kibana, create a basic "beats" logstash pipeline:
         hosts => ["https://localhost:9200"]
         user => "USER"
         password => "PASSWORD"
-        cacert => "/data/docker_elk_7.14.4/certs/ca/ca.crt"
+        cacert => "/data/[stack_location]/certs/ca/ca.crt"
         ssl => true
         ssl_certificate_verification => false
       }
     }
-
-## ELK Stack 8.2.2
-
-Stack 8.x => https://www.elastic.co/guide/en/elastic-stack-get-started/8.2/get-started-stack-docker.html#get-started-docker-tls
-
-Create a directory for hosting the compose file:
-
-    mkdir /data/docker_elk_8.2.2
-    chown 1000:1000 /data/docker_elk_8.2.2
-    cd /data/docker_elk_8.2.2
-
-Inside the directory create the files:
- - .env
- - docker-compose.yml
-	 - Change line "- certs:/usr/share/elasticsearch/config/certs" by "- ./
-	 - certs:/usr/share/elasticsearch/config/certs"
- 
 
 ## Check and enable firewall rule for logstash
 
