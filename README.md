@@ -30,16 +30,16 @@ Stack 7.17.x => https://www.elastic.co/guide/en/elastic-stack-get-started/7.17/g
 
 Create a directory for hosting the compose file:
 
-    mkdir /data/docker_elk_7.14.4
-    chown 1000:1000 /data/docker_elk_7.14.4
-    cd /data/docker_elk_7.14.4
+    mkdir /data/elk_7.14.4_docker
+    chown 1000:1000 /data/elk_7.14.4_docker
+    cd /data/elk_7.14.4_docker
 
 Inside the directory create the files:
  - instances.yml
  - .env
  - create-certs.yml 
 	 - => change line "- certs:/certs" by "- ./certs:/certs" 
-	 - it's to have a local /data/docker_elk_7.14.4/certs where all certs will be availables
+	 - it's to have a local /data/elk_7.14.4_docker/certs where all certs will be availables
  - elastic-docker-tls.yml
 	 - Change the 3 lines **ES_JAVA_OPTS=-Xms512m -Xmx512m** to adjust the memory given to each nodes
 
@@ -47,7 +47,7 @@ when everything is OK create certificats:
 
     docker-compose -f create-certs.yml run --rm create_certs
 
-All certificats are avalables in /data/docker_elk_7.14.4/certs
+All certificats are avalables in /data/elk_7.14.4_docker/certs
 Bring up the three-node Elasticsearch cluster:
 
     docker-compose -f elastic-docker-tls.yml up -d
