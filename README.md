@@ -241,6 +241,9 @@ for CentOs 8:
 For testing you can use stress-ng (for centos8):
     dnf install stress-ng -y
 
+Test 80% of all available CPU during 5 minutes:
+    stress-ng -c 0 -l 80 -t 5m
+
 
 **
 > Written with [StackEdit](https://stackedit.io/).
