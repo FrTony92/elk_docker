@@ -245,7 +245,24 @@ Test 80% of all available CPU during 5 minutes:
 
     stress-ng -c 0 -l 80 -t 5m
 
+## Enable snapshot in stack
 
+On the docker server add a local mount point i.e. `/snampshot`, check that the directory is owned by user uid 1000.
+
+ Open the docker-compose.yml file and for each ELK node add the following lines:
+
+ - Section "volumes":
+    -- /snapshot:/usr/share/snapshot
+ 
+ - Section "environment":
+    -- path.repo="/usr/share/snapshot"
+
+## Enable preconfigured index for kibana rules
+Open the kibana.yml file and add the following line:
+
+    xpack.actions.preconfiguredAlertHistoryEsIndex: true
+
+Restart the stack.
+    
 **
 > Written with [StackEdit](https://stackedit.io/).
-
