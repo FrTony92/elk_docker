@@ -245,6 +245,10 @@ Test 80% of all available CPU during 5 minutes:
 
     stress-ng -c 0 -l 80 -t 5m
 
+Test add 5Gb of used memory for 5 minutes:
+
+    stress-ng --vm 5 --vm-bytes 1024M -t 5m
+
 ## Enable snapshot in stack
 
 On the docker server add a local mount point i.e. `/snampshot`, check that the directory is owned by user uid 1000.
