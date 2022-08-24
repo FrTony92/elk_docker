@@ -199,7 +199,7 @@ On the serveur check that the firewall allow incoming traffic on tcp/5044
     ● firewalld.service - firewalld - dynamic firewall daemon
        Loaded: loaded (/usr/lib/systemd/system/firewalld.service; enabled; vendor preset: enabled)
        Active: active (running) since Fri 2022-04-22 00:56:08 CEST; 3min 2s ago
-Vérification de la configuration du firewall:
+Check of firewall:
 
     firewall-cmd --state 
     firewall-cmd --get-default-zone
