@@ -1,3 +1,4 @@
+
 # ELK full stack on docker-compose
 
 ## Docker checks
@@ -19,6 +20,26 @@ restart docker:
     systemctl daemon-reload
     systemctl restart docker
     systemctl show --property=Environment docker
+
+In order to make curl working inside containern, you must define proxy also in docker config.
+
+    vi ~/.docker/config.json
+
+Add those lines:
+```
+{
+ "proxies":
+ {
+   "default":
+   {
+     "httpProxy": "http://161.89.61.209:8080",
+     "httpsProxy": "http://161.89.61.209:8080",
+     "noProxy": "127.0.0.1,localhost,es01,161.89.70.0/24"
+   }
+ }
+}
+```
+
 Goal is to setup an elk cluster based on 3 nodes es01, es02 and es03 and a kibana node.
 
 On the target machine install docker and docker-compose.
@@ -269,4 +290,7 @@ Open the kibana.yml file and add the following line:
 Restart the stack.
     
 **
+> Written with [StackEdit](https://stackedit.io/).
+
+
 > Written with [StackEdit](https://stackedit.io/).
