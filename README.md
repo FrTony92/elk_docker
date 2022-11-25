@@ -32,9 +32,9 @@ Add those lines:
  {
    "default":
    {
-     "httpProxy": "http://161.89.61.209:8080",
-     "httpsProxy": "http://161.89.61.209:8080",
-     "noProxy": "127.0.0.1,localhost,es01,161.89.70.0/24"
+     "httpProxy": "http://a.b.c.d:8080",
+     "httpsProxy": "http://a.b.c.d:8080",
+     "noProxy": "127.0.0.1,localhost,es01,a.b.c.0/24"
    }
  }
 }
