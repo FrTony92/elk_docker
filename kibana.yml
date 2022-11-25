@@ -1,4 +1,7 @@
-elasticsearch.ssl.certificateAuthorities: config/certs/ca/ca.crt
+server.host: "0.0.0.0"
+server.shutdownTimeout: "5s"
+elasticsearch.hosts: [ "http://elasticsearch:9200" ]
+monitoring.ui.container.elasticsearch.enabled: true
 xpack.monitoring.ui.container.elasticsearch.enabled: true
 xpack.encryptedSavedObjects.encryptionKey: Hp5jW2nMY4hn3Jhvzsvl9G9crEBFxA9b
-xpack.security.enabled: true
+#xpack.security.enabled: true
