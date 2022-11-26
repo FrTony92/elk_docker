@@ -193,13 +193,13 @@ To allow a local logstash to connect to the node update logstash.yml with the fo
 
 On Kibana, create a basic "beats" logstash pipeline:
 ```
-    input {
-      beats {
-        port => 5044
-      }
+input {
+  beats {
+    port => 5044
     }
-    filter {
-    }    
+  }
+filter {
+}    
 output {   
   if [beat] or [elastic_agent] {    
     elasticsearch {    
