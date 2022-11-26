@@ -200,17 +200,18 @@ On Kibana, create a basic "beats" logstash pipeline:
     }
     filter {
     }    
-    output {
-      elasticsearch {
-        index => "%{[@metadata][beat]}-%{[@metadata][version]}-%{+YYYY.MM.dd}"
-        hosts => ["https://localhost:9200"]
-        user => "USER"
-        password => "PASSWORD"
-        cacert => "/data/[stack_location]/certs/ca/ca.crt"
-        ssl => true
-        ssl_certificate_verification => false
-      }
-    }
+output {   
+  if [beat] or [elastic_agent] {    
+    elasticsearch {    
+        hosts => ["https://es01:9200"]    
+        user => "[USER]"    
+        password => "[PASSWORD]"    
+        cacert => "/etc/metricbeat/certs/ca.crt"    
+        data_stream => true    
+        ssl => true     
+        }     
+    }      
+}     
 
 ## Check and enable firewall rule for logstash
 
