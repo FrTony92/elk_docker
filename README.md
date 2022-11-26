@@ -192,7 +192,7 @@ To allow a local logstash to connect to the node update logstash.yml with the fo
     # -------------------------------------------------------------------------
 
 On Kibana, create a basic "beats" logstash pipeline:
-
+```
     input {
       beats {
         port => 5044
@@ -212,7 +212,7 @@ output {
         }     
     }      
 }     
-
+```
 ## Check and enable firewall rule for logstash
 
 On the serveur check that the firewall allow incoming traffic on tcp/5044
