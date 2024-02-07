@@ -104,7 +104,7 @@ After check status of the cluster:
 
 ## ELK Stack 8.2.2
 
-Stack 8.x => https://www.elastic.co/guide/en/elastic-stack-get-started/8.2/get-started-stack-docker.html#get-started-docker-tls
+Stack 8.x => https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html#docker-compose-file
 
 Create a directory for hosting the compose file:
 
