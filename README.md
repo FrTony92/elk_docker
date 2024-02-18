@@ -2,8 +2,8 @@
 # ELK full stack on docker-compose
 
 - Prerequisites
-- [Stack 7.x](#ELK-Stack-7.x)
-- [Stack 8.x](#ELK-Stack-8.x)
+- [Stack 7.x](#elk-stack-7.x)
+- [Stack 8.x](#elk-stack-8.x)
 
 
 ## Docker checks</br>
