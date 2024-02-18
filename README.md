@@ -4,6 +4,11 @@
 - Prerequisites
 - [Stack 7.x](#elk-stack-7x)
 - [Stack 8.x](#elk-stack-8x)
+- [Check and post configuration ELK Stack (7 or 8)](#check-and-post-configuration-elk-stack-7-or-8)
+- [Check and enable firewall rule for logstash](#check-and-enable-firewall-rule-for-logstash)
+- [Checking/Testing](#for-checking--testing)
+- [Enable stack snapshot](#enable-snapshot-in-stack)
+- [DEPRECATED](#deprecated)
 
 
 ## Docker checks
