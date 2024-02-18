@@ -6,7 +6,7 @@
 - [Stack 8.x](#elk-stack-8.x)
 
 
-## Docker checks</br>
+## Docker checks
 
 Check docker configuration in case of proxy</br>
 ```
